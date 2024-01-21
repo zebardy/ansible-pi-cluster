@@ -1,0 +1,8 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: dotfiles
+  author: zebardy
+  description: my main dotfiles & base config
+  issue_tracker_url: https://github.com/zebardy/ansible-dotfiles/issues

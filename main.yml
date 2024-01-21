@@ -1,0 +1,15 @@
+---
+- hosts: cluster
+
+  vars_files:
+    - config.yml
+
+  roles:
+    - role: zebardy.dotfiles
+      tags: ['dotfiles']
+
+  tasks:
+    - import_tasks: tasks/swap.yml
+      when: configure_swap
+      tags: ['swap']
+

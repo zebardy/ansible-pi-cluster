@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+
+# Disable smart quotes as they’re annoying when typing code
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+
+# Avoid creating .DS_Store files on network volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
+# Show the ~/Library folder
+chflags nohidden ~/Library
+
+# Turn off natural scrolling
+defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+
+# Set mouse speed
+defaults write -g com.apple.mouse.scaling 4.5
+
+# Enable tap to click
+defaults -currentHost write -globalDomain com.apple.mouse.tapBehavior -int 0
+
+# Add British PC keyboard layout
+if [ -z "$(defaults read com.apple.HIToolbox | grep -i British-PC)" ]; then
+  #defaults write com.apple.HIToolbox AppleEnabledInputSources -array-add '{InputSourceKind="Keyboard Layout"; "KeyboardLayout Name"="British-PC"; "KeyboardLayout ID"=250;}'
+  defaults write com.apple.HIToolbox AppleEnabledInputSources -array-add '<dict><key>InputSourceKind</key><string>Keyboard Layout</string><key>KeyboardLayout ID</key><integer>250</integer><key>KeyboardLayout Name</key><string>British-PC</string></dict>'
+fi

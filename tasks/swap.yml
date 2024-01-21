@@ -1,0 +1,73 @@
+---
+- name: Check for zram
+  shell:
+    cmd: sudo cat /proc/swaps | grep -i zram
+  ignore_errors: true
+  register: zram_state
+
+- name: Create tmp dir.
+  tempfile:
+    state: directory
+    suffix: zram_swap
+  register: temp_dir_zram_swap
+  when:
+    - not zram_state.rc == 0
+
+- name: Get zram swap.
+  git:
+    repo: "https://github.com/foundObjects/zram-swap.git"
+    dest: "{{ temp_dir_zram_swap.path }}"
+    depth: 1
+    force: yes
+  when:
+    - not zram_state.rc == 0
+
+- name: Run zswap script.
+  become: true
+  shell:
+    cmd: cd {{ temp_dir_zram_swap.path }} && sudo ./install.sh
+  when:
+    - not zram_state.rc == 0
+
+- name: Remove tmp dir.
+  shell:
+    cmd: rm -rf {{ temp_dir_zram_swap.path }}
+  when:
+    - not zram_state.rc == 0
+
+- name: Set memory cache pressure.
+  become: true
+  lineinfile:
+    path: /etc/sysctl.conf
+    state: present
+    regexp: '^vm.vfs_cache_pressure'
+    line: vm.vfs_cache_pressure=500
+
+- name: Set swappiness.
+  become: true
+  lineinfile:
+    path: /etc/sysctl.conf
+    state: present
+    regexp: '^vm.swappiness'
+    line: vm.swappiness=100
+
+- name: Set dirty background ratio.
+  become: true
+  lineinfile:
+    path: /etc/sysctl.conf
+    state: present
+    regexp: '^vm.dirty_background_ratio'
+    line: vm.dirty_background_ratio=1
+
+- name: Set dirty ratio.
+  become: true
+  lineinfile:
+    path: /etc/sysctl.conf
+    state: present
+    regexp: '^vm.dirty_ratio'
+    line: vm.dirty_ratio=50
+
+- name: Ename sysctl settings.
+  become: true
+  shell:
+    cmd: sudo sysctl --system

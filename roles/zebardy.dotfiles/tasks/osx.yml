@@ -1,0 +1,10 @@
+---
+- name: Copy powerlevel10k config into place.
+  copy:
+    src: files/osx/osx
+    dest: ~/.osx
+    mode: '755'
+# TODO: Use sudo once .osx can be run via root with no user interaction.
+- name: Run .osx dotfiles.
+  command: "{{ osx_script }}"
+  changed_when: false

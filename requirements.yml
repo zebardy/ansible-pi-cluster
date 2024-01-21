@@ -1,0 +1,5 @@
+---
+- name: zebardy.dotfiles
+  src: https://github.com/zebardy/ansible-dotfiles.git
+  version: main
+  scm: git
