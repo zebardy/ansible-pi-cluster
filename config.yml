@@ -4,8 +4,18 @@ configure_tools: true
 configure_terminal: true
 configure_osx: false
 configure_swap: true
+configure_network: true
+configure_cgroup: true
+configure_containerd: true
+configure_kubernetes: false
+configure_zram: true
+configure_swap: true
+tmux_dashboard: true
+configure_node_tags: false
 
 osx_script: "~/.osx --no-restart"
+
+kubernetes_version: 
 
 # Install packages from other package managers.
 # Note: You are responsible for making sure the required package managers are

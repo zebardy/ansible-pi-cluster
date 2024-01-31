@@ -1,0 +1,8 @@
+---
+- name: Disable swap.
+  become: true
+  shell:
+    cmd: >
+      dphys-swapfile swapoff &&
+      dphys-swapfile uninstall &&
+      update-rc.d -f dphys-swapfile remove

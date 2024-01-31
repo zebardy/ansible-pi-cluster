@@ -1,37 +1,55 @@
 ---
 - name: Check for zram
+  become: true
   shell:
     cmd: sudo cat /proc/swaps | grep -i zram
   ignore_errors: true
   register: zram_state
 
-- name: Create tmp dir.
-  tempfile:
-    state: directory
-    suffix: zram_swap
-  register: temp_dir_zram_swap
+- name: Install zram-tools.
+  become: true
+  apt:
+    name: "zram-tools"
+    state: "latest"
+    update_cache: true
   when:
     - not zram_state.rc == 0
 
-- name: Get zram swap.
-  git:
-    repo: "https://github.com/foundObjects/zram-swap.git"
-    dest: "{{ temp_dir_zram_swap.path }}"
-    depth: 1
-    force: yes
+- name: Configure zram algorithm.
+  become: true
+  lineinfile:
+    path: /etc/default/zramswap
+    state: present
+    regexp: '^ALGO='
+    line: ALGO=lz4
   when:
     - not zram_state.rc == 0
 
-- name: Run zswap script.
+- name: Configure zram percent.
+  become: true
+  lineinfile:
+    path: /etc/default/zramswap
+    state: present
+    regexp: '^PERCENT='
+    line: PERCENT=50
+  when:
+    - not zram_state.rc == 0
+
+- name: Reboot.
   become: true
   shell:
-    cmd: cd {{ temp_dir_zram_swap.path }} && sudo ./install.sh
+    cmd: sleep 5 && reboot
+  async: 1
+  poll: 0
   when:
     - not zram_state.rc == 0
 
-- name: Remove tmp dir.
-  shell:
-    cmd: rm -rf {{ temp_dir_zram_swap.path }}
+- name: Wait for the reboot to complete.
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
   when:
     - not zram_state.rc == 0
 

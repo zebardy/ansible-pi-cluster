@@ -4,12 +4,56 @@
   vars_files:
     - config.yml
 
+  pre_tasks:
+    - name: Set the master node IP.
+      set_fact:
+        kubernetes_master_ip: "{{ hostvars['kube1']['ansible_host'] }}"
+      tags: ['always']
+
+    - import_tasks: tasks/swap_off.yml
+      become: true
+      when: 
+        - ansible_swaptotal_mb > 0
+        - node_swap == false
+        - configure_swap
+      tags: ['swap']
+
+    - import_tasks: tasks/zram.yml
+      become: true
+      when: 
+        - node_zram == true
+        - configure_zram
+      tags: ['zram']
+
+    - import_tasks: tasks/network.yml
+      become: true
+      when: configure_network
+      tags: ['network']
+
+    - import_tasks: tasks/cgroup.yml
+      become: true
+      when: configure_cgroup
+      tags: ['cgroup']
+
   roles:
     - role: zebardy.dotfiles
       tags: ['dotfiles']
 
-  tasks:
-    - import_tasks: tasks/swap.yml
-      when: configure_swap
-      tags: ['swap']
+    - role: geerlingguy.containerd
+      when: configure_containerd
+      become: true
+      tags: ['containerd']
 
+    - role: geerlingguy.kubernetes
+      when: configure_kubernetes
+      become: true
+      tags: ['kubernetes']
+
+  tasks:
+    - import_tasks: tasks/tmux_dashboard.yml
+      when: configure_tmux_dashboard
+      tags: ['tmux_dashboard']
+
+    - import_tasks: tasks/node_tags.yml
+      when: configure_node_tags
+      tags: ['node_tags']

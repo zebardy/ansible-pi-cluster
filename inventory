@@ -1,5 +1,5 @@
 [cluster]
-cluster-node-purple ansible_host=192.168.1.63 kubernetes_role=storage_openebs
+cluster-node-purple ansible_host=192.168.1.63 kubernetes_role=node node_zram=true node_swap=true
 
 [cluster:vars]
 ansible_ssh_user=pi
