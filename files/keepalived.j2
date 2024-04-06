@@ -15,7 +15,7 @@ vrrp_instance VI_1 {
     virtual_router_id 152
     priority {{ keepalive_priority }}
     virtual_ipaddress {
-        {{ cluster_ip }}
+        {{ cluster_ip.stdout }}
     }
     track_script {
         check_apiserver

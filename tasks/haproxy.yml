@@ -6,11 +6,11 @@
     state: "latest"
     update_cache: true
 
-- name: configure haproxy.
+- name: Configure haproxy.
   become: true
-  copy:
-    src: ./files/haproxy.cfg
-    dest: /etc/haproxy/
+  template:
+    src: ./files/haproxy.j2
+    dest: /etc/haproxy/haproxy.cfg
     mode: '644'
 
 - name: Restart haproxy.

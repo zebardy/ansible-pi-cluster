@@ -8,7 +8,7 @@ cluster-node-violet ansible_host=violet.node.kube.zebardy.net kubernetes_role=no
 [cluster:vars]
 ansible_ssh_user=pi
 deploy_target=pi
-kubernetes_apiserver_advertise_address=192.168.1.11
+#kubernetes_apiserver_advertise_address=192.168.1.11
 kubernetes_version='1.26'
 kubernetes_allow_pods_on_control_plane=false
 #kubernetes_kubeadm_init_extra_opts='--control-plane-endpoint=192.168.1.11:6443'

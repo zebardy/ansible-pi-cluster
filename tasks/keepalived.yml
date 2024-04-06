@@ -13,14 +13,14 @@
     state: "latest"
     update_cache: true
 
-#- name: Get IP from hostname.
-#  shell:
-#    cmd: dig {{ kubernetes_apiserver_advertise_address }} +search +short
-#  register: cluster_ip
+- name: Get IP from hostname.
+  shell:
+    cmd: "dig {{ kubernetes_cluster_address }} +search +short"
+  register: cluster_ip
 
-- name: Set cluster_ip.
-  set_fact:
-    cluster_ip: "{{ kubernetes_apiserver_advertise_address }}"
+#- name: Set cluster_ip.
+#  set_fact:
+#    cluster_ip: "{{ kubernetes_apiserver_advertise_address }}"
   
 - name: Configure keepalived.
   become: true
