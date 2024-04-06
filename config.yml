@@ -24,7 +24,6 @@ containerd_config_cgroup_driver_systemd: true
 
 kubernetes_version: '1.25'
 #kubernetes_kubelet_extra_args: --fail-swap-on=false --system-reserved="cpu=100m,memory=100Mi" --kube-reserved="cpu=100m,memory=100Mi"
-#kubernetes_join_command: kubeadm join 192.168.1.10:8443 --token xni7c8.lapc1uyhn0ucz00h --discovery-token-ca-cert-hash sha256:0de8ce1823b2ee58f6a5a5a3aa9649c143bef4f16c44a66fa92906b7127466a6
 kubernetes_config_kubelet_configuration:
   failSwapOn: false
   systemReserved: 
@@ -39,21 +38,22 @@ kubernetes_config_cluster_configuration:
     podSubnet: "{{ kubernetes_pod_network.cidr }}"
   kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
   controlPlaneEndpoint: "mamut.cluster.kube.zebardy.net:6443"
-  etcd:
-    local:
-      serverCertSANs:
-      - "192.168.1.71"
-      peerCertSANs:
-      - "192.168.1.71"
-      extraArgs:
-        initial-cluster: cluster-node-purple=https://192.168.1.71:2380
-        listen-peer-urls: https://192.168.1.71:2380
-        listen-client-urls: https://127.0.0.1:2379
-        advertise-client-urls: https://127.0.0.1:2379
-        initial-advertise-peer-urls: https://192.168.1.71:2380
-  apiServer:
-    extraArgs:
-      etcd-servers: https://127.0.0.1:2379
+
+ # etcd:
+ #   local:
+ #     serverCertSANs:
+ #     - "192.168.1.71"
+ #     peerCertSANs:
+ #     - "192.168.1.71"
+ #     extraArgs:
+ #       initial-cluster: cluster-node-purple=https://192.168.1.71:2380
+ #       listen-peer-urls: https://192.168.1.71:2380
+ #       listen-client-urls: https://127.0.0.1:2379
+ #       advertise-client-urls: https://127.0.0.1:2379
+ #       initial-advertise-peer-urls: https://192.168.1.71:2380
+ # apiServer:
+ #   extraArgs:
+ #     etcd-servers: https://127.0.0.1:2379
   
     
 
