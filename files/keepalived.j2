@@ -1,0 +1,23 @@
+global_defs {
+    router_id mamut
+}
+vrrp_script check_apiserver {
+  script "/etc/keepalived/check_apiserver.sh"
+  interval 3
+  weight -2
+  fall 10
+  rise 2
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    virtual_router_id 152
+    priority {{ keepalive_priority }}
+    virtual_ipaddress {
+        {{ cluster_ip }}
+    }
+    track_script {
+        check_apiserver
+    }
+}

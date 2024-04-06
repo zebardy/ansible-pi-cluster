@@ -47,9 +47,9 @@
 - name: Wait for the reboot to complete.
   wait_for_connection:
     connect_timeout: 20
-    sleep: 5
-    delay: 5
-    timeout: 300
+    sleep: 20
+    delay: 20
+    timeout: 600
   when:
     - not zram_state.rc == 0
 

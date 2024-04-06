@@ -1,7 +1,14 @@
 [cluster]
-cluster-node-purple ansible_host=192.168.1.63 kubernetes_role=node node_zram=true node_swap=true
+cluster-node-purple ansible_host=purple.node.kube.zebardy.net kubernetes_role=control_plane node_zram=true node_swap=true keepalive_priority=243
+cluster-node-indigo ansible_host=indigo.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true
+cluster-node-pearl ansible_host=pearl.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true
+cluster-node-magenta ansible_host=magenta.node.kube.zebardy.net kubernetes_role=control_plane node_zram=true node_swap=true keepalive_priority=242
+cluster-node-violet ansible_host=violet.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true
 
 [cluster:vars]
 ansible_ssh_user=pi
 deploy_target=pi
-kubernetes_apiserver_advertise_address=192.168.1.10
+kubernetes_apiserver_advertise_address=192.168.1.11
+kubernetes_version='1.26'
+kubernetes_allow_pods_on_control_plane=false
+#kubernetes_kubeadm_init_extra_opts='--control-plane-endpoint=192.168.1.11:6443'

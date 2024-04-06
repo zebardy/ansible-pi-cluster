@@ -1,0 +1,46 @@
+---
+- name: Install nginx.
+  become: true
+  apt:
+    name: "nginx"
+    state: "latest"
+    update_cache: true
+
+- name: configure nginx.
+  become: true
+  copy:
+    src: ./files/nginx.conf
+    dest: /etc/nginx/
+    mode: '644'
+
+- name: create certs directories
+  become: True
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+  - "/etc/nginx/certs/ca"
+  - "/etc/nginx/certs/server"
+
+- name: copy certs.
+  become: true
+  copy:
+    src: "./{{ item }}"
+    dest: /etc/nginx/certs/server/
+    mode: '644'
+  loop:
+    - "*.zebardy.net.crt"
+    - "*.zebardy.net.key"
+
+- name: copy CA cert.
+  become: true
+  copy:
+    src: "./ca.crt"
+    dest: /etc/nginx/certs/ca/
+    mode: '644'
+
+- name: Restart nginx.
+  become: true
+  shell:
+    cmd: service nginx restart
+

@@ -20,6 +20,11 @@
     name: br_netfilter
     state: present
 
+- name: Configure modules to load at boot.
+  shell: >
+    echo "br_netfilter" | sudo tee /etc/modules-load.d/k8s.conf
+
+
 - name: Let iptables see bridged traffic.
   sysctl:
     name: "{{ item }}"

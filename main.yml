@@ -5,23 +5,24 @@
     - config.yml
 
   pre_tasks:
-    - name: Set the master node IP.
-      set_fact:
-        kubernetes_master_ip: "{{ hostvars['kube1']['ansible_host'] }}"
-      tags: ['always']
+  #  - name: Set the master node IP.
+  #    set_fact:
+  #      kubernetes_master_ip: "{{ hostvars['cluster-node-grey']['ansible_host'] }}"
+  #    tags: ['always']
+  #    when: configure_kubernetes
 
     - import_tasks: tasks/swap_off.yml
       become: true
       when: 
         - ansible_swaptotal_mb > 0
-        - node_swap == false
+        - not node_swap
         - configure_swap
       tags: ['swap']
 
     - import_tasks: tasks/zram.yml
       become: true
       when: 
-        - node_zram == true
+        - node_zram
         - configure_zram
       tags: ['zram']
 
@@ -34,6 +35,21 @@
       become: true
       when: configure_cgroup
       tags: ['cgroup']
+
+    - import_tasks: tasks/nginx.yml
+      become: true
+      when: configure_nginx and kubernetes_role == "control_plane"
+      tags: ['nginx']
+
+    - import_tasks: tasks/haproxy.yml
+      become: true
+      when: configure_haproxy and kubernetes_role == "control_plane"
+      tags: ['haproxy']
+
+    - import_tasks: tasks/keepalived.yml
+      become: true
+      when: configure_keepalived and kubernetes_role == "control_plane"
+      tags: ['keepalived']
 
   roles:
     - role: zebardy.dotfiles
@@ -54,6 +70,14 @@
       when: configure_tmux_dashboard
       tags: ['tmux_dashboard']
 
-    - import_tasks: tasks/node_tags.yml
-      when: configure_node_tags
-      tags: ['node_tags']
+    #- import_tasks: tasks/node_tags.yml
+    #  when: configure_node_tags
+    #  tags: ['node_tags']
+
+
+# kubectl label nodes [node]] node=openebs
+# kubectl label nodes [node] openebs.io/storage=true
+# kubectl label nodes [node] topology.kubernetes.io/zone=[zone]
+
+# sudo apt install hwinfo
+# sudo apt install open-iscsi

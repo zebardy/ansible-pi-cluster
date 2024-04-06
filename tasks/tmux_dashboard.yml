@@ -1,1 +1,6 @@
 ---
+- name: Copy tmux dashboard.
+  copy:
+    src: ./files/tmux_session.sh
+    dest: ~/tmux_session.sh
+    mode: '755'

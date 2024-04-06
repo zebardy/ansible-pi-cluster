@@ -1,0 +1,20 @@
+---
+- name: Install haproxy.
+  become: true
+  apt:
+    name: "haproxy"
+    state: "latest"
+    update_cache: true
+
+- name: configure haproxy.
+  become: true
+  copy:
+    src: ./files/haproxy.cfg
+    dest: /etc/haproxy/
+    mode: '644'
+
+- name: Restart haproxy.
+  become: true
+  shell:
+    cmd: service haproxy restart
+
