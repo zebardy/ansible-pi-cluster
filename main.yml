@@ -51,6 +51,11 @@
       when: configure_keepalived and kubernetes_role == "control_plane"
       tags: ['keepalived']
 
+    - import_tasks: tasks/clean_kubernetes.yml
+      become: true
+      when: configure_clean_kubernetes
+      tags: ['clean_kubernetes']
+
   roles:
     - role: zebardy.dotfiles
       tags: ['dotfiles']
@@ -70,14 +75,32 @@
       when: configure_tmux_dashboard
       tags: ['tmux_dashboard']
 
-    #- import_tasks: tasks/node_tags.yml
-    #  when: configure_node_tags
-    #  tags: ['node_tags']
+    - import_tasks: tasks/helm.yml
+      when: configure_helm and kubernetes_role == 'control_plane'
+      become: true
+      tags: ['helm']
+
+    - import_tasks: tasks/traefik.yml
+      when: configure_traefik and kubernetes_role == 'control_plane'
+      run_once: true
+      become: true
+      tags: ['traefik']
+
+    - import_tasks: tasks/node_tags.yml
+      when: configure_node_tags
+      become: true
+      tags: ['node_tags']
+
+    - import_tasks: tasks/openebs.yml
+      when: configure_openebs
+      run_once: true
+      become: true
+      tags: ['openebs']
 
 
-# kubectl label nodes [node]] node=openebs
-# kubectl label nodes [node] openebs.io/storage=true
-# kubectl label nodes [node] topology.kubernetes.io/zone=[zone]
+# kubectl label nodes {{ inventory_hostname }} node=openebs
+# kubectl label nodes {{ inventory_hostname }} openebs.io/storage=true
+# kubectl label nodes {{ inventory_hostname }} topology.kubernetes.io/zone=[zone]
 
 # sudo apt install hwinfo
 # sudo apt install open-iscsi

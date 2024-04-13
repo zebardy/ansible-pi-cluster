@@ -35,6 +35,7 @@ defaults
 
 frontend k8s-apiserver
   bind :8443
+  #bind ::1:6443
   mode tcp
   option tcplog
   default_backend k8s-apiserver

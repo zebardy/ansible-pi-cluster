@@ -1,10 +1,10 @@
 [cluster]
-cluster-node-purple ansible_host=purple.node.kube.zebardy.net kubernetes_role=control_plane node_zram=true node_swap=true keepalive_priority=243
-cluster-node-indigo ansible_host=indigo.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true
-cluster-node-pearl ansible_host=pearl.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true
-cluster-node-magenta ansible_host=magenta.node.kube.zebardy.net kubernetes_role=control_plane node_zram=true node_swap=true keepalive_priority=242
-cluster-node-violet ansible_host=violet.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true
-
+cluster-node-purple ansible_host=purple.node.kube.zebardy.net kubernetes_role=control_plane node_zram=true node_swap=true keepalive_priority=243 storage_node=false zone=swim
+cluster-node-indigo ansible_host=indigo.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true storage_node=true zone=swim
+cluster-node-pearl ansible_host=pearl.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true storage_node=true zone=bike
+cluster-node-magenta ansible_host=magenta.node.kube.zebardy.net kubernetes_role=control_plane node_zram=true node_swap=true keepalive_priority=242 storage_node=false zone=bike
+cluster-node-violet ansible_host=violet.node.kube.zebardy.net kubernetes_role=node node_zram=true node_swap=true storage_node=true zone=run
+ 
 [cluster:vars]
 ansible_ssh_user=pi
 deploy_target=pi

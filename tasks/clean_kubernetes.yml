@@ -1,0 +1,66 @@
+---
+- name: Check if Kubernetes has already been initialized.
+  stat:
+    path: /etc/kubernetes/admin.conf
+  when: kubernetes_role == 'control_plane'
+  register: kubernetes_init_stat
+
+- name: Check if node has already joined a cluster.
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  when: kubernetes_role == 'node'
+  register: kubernetes_join_stat
+
+- name: Stop Kubelet.
+  become: true
+  shell:
+    cmd: service kubelet stop
+  when: (kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists) or (kubernetes_role == 'node' and kubernetes_join_stat.stat.exists)
+
+- name: Stop containers.
+  become: true
+  shell:
+    cmd: sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock stop $(sudo crictl --runtime-endpoint unix:///run/containerd/containerd.sock ps | cut -d ' ' -f 1 | grep -v CONTAINER)
+  when: (kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists) or (kubernetes_role == 'node' and kubernetes_join_stat.stat.exists)
+
+- name: Delete manifests.
+  become: true
+  shell:
+    cmd: rm -rf /etc/kubernetes/manifests/*
+  when: (kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists) or (kubernetes_role == 'node' and kubernetes_join_stat.stat.exists)
+
+- name: Delete certs.
+  become: true
+  shell:
+    cmd: rm -rf /etc/kubernetes/pki/*
+  when: (kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists) or (kubernetes_role == 'node' and kubernetes_join_stat.stat.exists)
+
+- name: Delete conf file.
+  become: true
+  shell:
+    cmd: rm -rf /etc/kubernetes/*.conf
+  when: (kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists) or (kubernetes_role == 'node' and kubernetes_join_stat.stat.exists)
+
+#- name: Delete kubelet files.
+#  become: true
+#  shell:
+#    cmd: rm -rf /var/lib/kubelet/*
+#  when: (kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists) or (kubernetes_role == 'node' and kubernetes_join_stat.stat.exists)
+
+- name: Delete etcd data.
+  become: true
+  shell:
+    cmd: rm -rf /var/lib/etcd/*
+  when: kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists
+
+- name: Kubeadm reset.
+  become: true
+  shell:
+    cmd: kubeadm reset -f
+  when: (kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists) or (kubernetes_role == 'node' and kubernetes_join_stat.stat.exists)
+
+- name: Start Kubelet.
+  become: true
+  shell:
+    cmd: service kubelet start
+  when: (kubernetes_role == 'control_plane' and kubernetes_init_stat.stat.exists) or (kubernetes_role == 'node' and kubernetes_join_stat.stat.exists)

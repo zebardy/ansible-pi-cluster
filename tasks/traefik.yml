@@ -1,0 +1,50 @@
+---
+- name: Add traefik
+  kubernetes.core.helm_repository:
+    name: traefik
+    repo_url: "https://traefik.github.io/charts"
+
+- name: check for existing install
+  kubernetes.core.helm_info:
+    name: traefik-ingres-main
+    namespace: traefik
+  register: traefik_status
+
+- name: Print status info
+  ansible.builtin.debug:
+    var: traefik_status
+
+- name: deploy traefik.
+  kubernetes.core.helm:
+    name: traefik-ingres-main
+    chart_ref: traefik/traefik
+    release_namespace: traefik
+    create_namespace: true
+    values:
+      deployment:
+        kind: DaemonSet 
+      ports:
+        websecure:
+          expose:
+            default: false
+      ingressRoute:
+        dashboard:
+          enabled: false
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+      - effect: NoExecute
+        key: node.kubernetes.io/not-ready
+        operator: Exists
+        tolerationSeconds: 300
+      - effect: NoExecute
+        key: node.kubernetes.io/unreachable
+        operator: Exists
+        tolerationSeconds: 300        
+      

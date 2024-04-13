@@ -13,7 +13,11 @@ configure_tmux_dashboard: true
 configure_nginx: true
 configure_haproxy: true
 configure_keepalived: true
-configure_node_tags: false
+configure_helm: true
+configure_traefik: true
+configure_node_tags: true
+configure_openebs: true
+configure_clean_kubernetes: true
 
 osx_script: "~/.osx --no-restart"
 

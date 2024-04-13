@@ -1,0 +1,20 @@
+---
+- name: Select control node
+  run_once: true
+  set_fact:
+    control_node: "{{ inventory_hostname }}"
+  delegate_to: "{{ item }}"
+  with_items: "{{ play_hosts }}"
+  when: kubernetes_role == 'control_plane'
+
+- name: Add storage tags to storage nodes.
+  shell: |
+    kubectl label nodes {{ inventory_hostname }} node=openebs
+    kubectl label nodes {{ inventory_hostname }} openebs.io/storage=true
+  delegate_to: "{{ control_node }}"
+  when: storage_node
+
+- name: Add zone tags.
+  shell: |
+    kubectl label nodes {{ inventory_hostname }} topology.kubernetes.io/zone={{ zone }}
+  delegate_to: "{{ control_node }}"

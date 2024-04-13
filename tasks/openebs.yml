@@ -1,0 +1,215 @@
+---
+#- name: Install open-iscsi.
+#  apt:
+#    name: "open-iscsi"
+#    state: "latest"
+#    update_cache: true
+
+#- name: Add NDM repo.
+#  kubernetes.core.helm_repository:
+#    name: openebs-ndm
+#    repo_url: "https://openebs.github.io/node-disk-manager"
+
+#- name: Deploy NDM.
+#  kubernetes.core.helm:
+#    name: openebs
+#    chart_ref: openebs-ndm/openebs-ndm
+#    release_namespace: openebs
+#    create_namespace: true
+#    values:
+#      ndm:
+#        nodeSelector:
+#          node: openebs
+#        tolerations:
+#        - effect: NoSchedule
+#          key: role
+#          operator: Equal
+#          value: openebs
+#        - effect: NoExecute
+#          key: role
+#          operator: Equal
+#          value: openebs 
+#      ndmOperator:
+#        nodeSelector:
+#          node: openebs
+#        tolerations:
+#        - effect: NoSchedule
+#          key: role
+#          operator: Equal
+#          value: openebs
+#        - effect: NoExecute
+#          key: role
+#          operator: Equal
+#          value: openebs         
+
+#- name: Add cstor repo
+#  kubernetes.core.helm_repository:
+#    name: openebs-cstor
+#    repo_url: "https://openebs.github.io/cstor-operators"
+
+#- name: Deploy cstor.
+#  kubernetes.core.helm:
+#    name: openebs-cstor
+#    chart_ref: openebs-cstor/cstor
+#    release_namespace: openebs
+#    create_namespace: true
+#    values:
+#      openebsNDM:
+#        enabled: false
+#      admissionServer:
+#        nodeSelector:
+#          node: openebs
+#        tolerations:
+#        - effect: NoSchedule
+#          key: role
+#          operator: Equal
+#          value: openebs
+#        - effect: NoExecute
+#          key: role
+#          operator: Equal
+#          value: openebs   
+#      csiController:
+#        nodeSelector:
+#          node: openebs
+#        tolerations:
+#        - effect: NoSchedule
+#          key: role
+#          operator: Equal
+#          value: openebs
+#        - effect: NoExecute
+#          key: role
+#          operator: Equal
+#          value: openebs   
+#      csiNode:
+#        nodeSelector:
+#          node: openebs
+#        tolerations:
+#        - effect: NoSchedule
+#          key: role
+#          operator: Equal
+#          value: openebs
+#        - effect: NoExecute
+#          key: role
+#          operator: Equal
+#          value: openebs   
+#      cspcOperator:
+#        nodeSelector:
+#          node: openebs
+#        tolerations:
+#        - effect: NoSchedule
+#          key: role
+#          operator: Equal
+#          value: openebs
+#        - effect: NoExecute
+#          key: role
+#          operator: Equal
+#          value: openebs        
+
+#- name: Add openebs-nfs repo
+#  kubernetes.core.helm_repository:
+#    name: openebs-nfs
+#    repo_url: "https://openebs.github.io/dynamic-nfs-provisioner"
+
+#- name: Deploy openebs-nfs.
+#  kubernetes.core.helm:
+#    name: openebs-nfs
+#    chart_ref: openebs-nfs/nfs-provisioner
+#    release_namespace: openebs
+#    create_namespace: true 
+
+- name: Add openebs repo
+  kubernetes.core.helm_repository:
+    name: openebs
+    repo_url: "https://openebs.github.io/charts"
+    
+- name: Deploy openebs.
+  kubernetes.core.helm:
+    name: openebs
+    chart_ref: openebs/openebs
+    release_namespace: openebs
+    create_namespace: true
+    values: 
+      legacy:
+        enabled: false
+      nfs-provisioner:
+        enabled: true
+      openebs-ndm:
+        enabled: true
+        ndm:
+          nodeSelector:
+            node: openebs
+          tolerations:
+          - effect: NoSchedule
+            key: role
+            operator: Equal
+            value: openebs
+          - effect: NoExecute
+            key: role
+            operator: Equal
+            value: openebs
+          filters:
+            excludePaths: loop,fd0,sr0,/dev/ram,/dev/dm-,/dev/md,/dev/rbd,/dev/zd,/dev/zram,/dev/loop
+        ndmOperator:
+          nodeSelector:
+            node: openebs
+          tolerations:
+          - effect: NoSchedule
+            key: role
+            operator: Equal
+            value: openebs
+          - effect: NoExecute
+            key: role
+            operator: Equal
+            value: openebs 
+      cstor:
+        enabled: true
+        admissionServer:
+          nodeSelector:
+            node: openebs
+          tolerations:
+          - effect: NoSchedule
+            key: role
+            operator: Equal
+            value: openebs
+          - effect: NoExecute
+            key: role
+            operator: Equal
+            value: openebs   
+        csiController:
+          nodeSelector:
+            node: openebs
+          tolerations:
+          - effect: NoSchedule
+            key: role
+            operator: Equal
+            value: openebs
+          - effect: NoExecute
+            key: role
+            operator: Equal
+            value: openebs   
+        csiNode:
+          nodeSelector:
+            node: openebs
+          tolerations:
+          - effect: NoSchedule
+            key: role
+            operator: Equal
+            value: openebs
+          - effect: NoExecute
+            key: role
+            operator: Equal
+            value: openebs   
+        cspcOperator:
+          nodeSelector:
+            node: openebs
+          tolerations:
+          - effect: NoSchedule
+            key: role
+            operator: Equal
+            value: openebs
+          - effect: NoExecute
+            key: role
+            operator: Equal
+            value: openebs  
+
+      
