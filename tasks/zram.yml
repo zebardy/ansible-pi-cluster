@@ -85,7 +85,7 @@
     regexp: '^vm.dirty_ratio'
     line: vm.dirty_ratio=50
 
-- name: Ename sysctl settings.
+- name: Sysctl settings.
   become: true
   shell:
     cmd: sudo sysctl --system

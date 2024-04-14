@@ -65,7 +65,7 @@
       become: true
       tags: ['containerd']
 
-    - role: geerlingguy.kubernetes
+    - role: zebardy.kubernetes
       when: configure_kubernetes
       become: true
       tags: ['kubernetes']

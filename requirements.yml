@@ -5,4 +5,7 @@
   scm: git
 
 - src: geerlingguy.containerd
-- src: geerlingguy.kubernetes
+- name: zebardy.kubernetes
+  src: https://github.com/zebardy/ansible-role-kubernetes.git
+  version: master
+  scm: git
