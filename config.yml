@@ -16,7 +16,8 @@ configure_keepalived: true
 configure_helm: true
 configure_traefik: true
 configure_node_tags: true
-configure_openebs: true
+configure_openebs: false
+configure_longhorn: true
 configure_clean_kubernetes: true
 
 osx_script: "~/.osx --no-restart"

@@ -9,7 +9,7 @@
 
 - name: Add storage tags to storage nodes.
   shell: |
-    kubectl label nodes {{ inventory_hostname }} node=openebs
+    kubectl label nodes {{ inventory_hostname }} node=storage
     kubectl label nodes {{ inventory_hostname }} openebs.io/storage=true
   delegate_to: "{{ control_node }}"
   when: storage_node

@@ -97,6 +97,12 @@
       become: true
       tags: ['openebs']
 
+    - import_tasks: tasks/longhorn.yml
+      when: configure_longhorn
+      run_once: true
+      become: true
+      tags: ['longhorn']
+
 
 # kubectl label nodes {{ inventory_hostname }} node=openebs
 # kubectl label nodes {{ inventory_hostname }} openebs.io/storage=true
